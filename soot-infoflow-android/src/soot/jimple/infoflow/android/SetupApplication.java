@@ -38,6 +38,7 @@ import soot.Scene;
 import soot.SootClass;
 import soot.SootMethod;
 import soot.Unit;
+import soot.MethodOrMethodContext;
 import soot.jimple.Stmt;
 import soot.jimple.infoflow.AbstractInfoflow;
 import soot.jimple.infoflow.IInfoflow;
@@ -80,6 +81,8 @@ import soot.jimple.infoflow.data.Abstraction;
 import soot.jimple.infoflow.data.FlowDroidMemoryManager.PathDataErasureMode;
 import soot.jimple.infoflow.handlers.PostAnalysisHandler;
 import soot.jimple.infoflow.handlers.PreAnalysisHandler;
+import soot.jimple.toolkits.callgraph.CallGraph;
+import soot.jimple.toolkits.callgraph.Edge;
 import soot.jimple.infoflow.handlers.ResultsAvailableHandler;
 import soot.jimple.infoflow.handlers.TaintPropagationHandler;
 import soot.jimple.infoflow.ipc.IIPCManager;
@@ -1399,6 +1402,13 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 		logger.info(
 				String.format("Collecting callbacks and building a callgraph took %d seconds", (int) callbackDuration));
 
+		if(config.getPrintCallGraphOnly()){
+			visitAndPrintCallGraph(Scene.v().getCallGraph());
+
+
+			return;
+		}
+
 		final Set<SourceSinkDefinition> sources = getSources();
 		final Set<SourceSinkDefinition> sinks = getSinks();
 		final String apkFileLocation = config.getAnalysisFileConfig().getTargetAPKFile();
@@ -1457,6 +1467,39 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 			handler.onResultsAvailable(resultAggregator.getLastICFG(), resultAggregator.getLastResults());
 	}
 
+
+	private void visitAndPrintCallGraph(CallGraph cg){
+		ArrayList<String> visited = new ArrayList<>();
+		Iterator<MethodOrMethodContext> startMethods = cg.sourceMethods();
+		ArrayList<Pair<String,String>> callgraphStrings = new ArrayList<>();
+		while(startMethods.hasNext()){
+			visitNode(cg,startMethods.next(), visited,callgraphStrings);
+		}
+		//System.out.println("start_printing_callgraph:\n");
+		for(Pair<String,String> line:callgraphStrings){
+			System.out.println(line.getO1() + " -> " +line.getO2());
+		}
+	}
+
+	private void visitNode(CallGraph cg, MethodOrMethodContext cur, ArrayList<String> visited, ArrayList<Pair<String,String>> relation){
+		String sigAndName = cur.method().getSignature();
+		//System.out.println(sigAndName);
+		if(visited.contains(sigAndName)){
+			//we visited this, be done.
+			return;
+		}else{
+			visited.add(sigAndName);
+			//we haven't visited this, get its children and do the same
+			Iterator<Edge> eIt=cg.edgesOutOf(cur);
+			while(eIt.hasNext()){
+				Edge e = eIt.next();
+				MethodOrMethodContext child = e.getTgt();
+				relation.add(new Pair(sigAndName,child.method().getSignature()));
+				visitNode(cg,child,visited,relation);
+			}
+		}
+
+	}
 	/**
 	 * Writes the given data flow results into the configured output file
 	 * 

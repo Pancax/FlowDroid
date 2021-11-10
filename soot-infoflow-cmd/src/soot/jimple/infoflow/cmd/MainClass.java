@@ -116,6 +116,7 @@ public class MainClass {
 	private static final String OPTION_PATH_RECONSTRUCTION_MODE = "pr";
 	private static final String OPTION_IMPLICIT_FLOW_MODE = "i";
 	private static final String OPTION_STATIC_FLOW_TRACKING_MODE = "sf";
+	private static final String OPTION_PRINT_CALLGRAPH ="pcg";
 
 	// Evaluation-specific options
 	private static final String OPTION_ANALYZE_FRAMEWORKS = "ff";
@@ -220,7 +221,7 @@ public class MainClass {
 				"Use the specified mode when processing implicit data flows (NONE, ARRAYONLY, ALL)");
 		options.addOption(OPTION_STATIC_FLOW_TRACKING_MODE, "staticmode", true,
 				"Use the specified mode when tracking static data flows (CONTEXTFLOWSENSITIVE, CONTEXTFLOWINSENSITIVE, NONE)");
-
+		options.addOption(OPTION_PRINT_CALLGRAPH,true,"Print callgraph only");
 		// Evaluation-specific options
 		options.addOption(OPTION_ANALYZE_FRAMEWORKS, "analyzeframeworks", false,
 				"Analyze the full frameworks together with the app without any optimizations");
@@ -695,6 +696,9 @@ public class MainClass {
 			config.setEnableTypeChecking(false);
 		if (cmd.hasOption(OPTION_REFLECTION))
 			config.setEnableReflection(true);
+		if(cmd.hasOption(OPTION_PRINT_CALLGRAPH)){
+			config.setPrintCallGraphOnly(true);
+		}
 		// Individual settings
 		{
 			Integer aplength = getIntOption(cmd, OPTION_ACCESS_PATH_LENGTH);

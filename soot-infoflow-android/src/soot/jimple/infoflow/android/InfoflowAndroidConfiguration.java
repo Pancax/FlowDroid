@@ -906,6 +906,7 @@ public class InfoflowAndroidConfiguration extends InfoflowConfiguration {
 
 	private SootIntegrationMode sootIntegrationMode = SootIntegrationMode.CreateNewInstace;
 	private boolean mergeDexFiles = false;
+	private boolean printCallGraphOnly =false;
 
 	public InfoflowAndroidConfiguration() {
 		// We need to adapt some of the defaults. Most people don't care about
@@ -1035,6 +1036,13 @@ public class InfoflowAndroidConfiguration extends InfoflowConfiguration {
 	 */
 	public void setMergeDexFiles(boolean mergeDexFiles) {
 		this.mergeDexFiles = mergeDexFiles;
+	}
+
+	public void setPrintCallGraphOnly(boolean b){
+		printCallGraphOnly=b;
+	}
+	public boolean getPrintCallGraphOnly(){
+		return printCallGraphOnly;
 	}
 
 	@Override
