@@ -565,7 +565,7 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 		// Construct the actual callgraph
 		logger.info("Constructing the callgraph...");
 		PackManager.v().getPack("cg").apply();
-
+		//TODO:: Heres the callgraph
 		// ICC instrumentation
 		if (iccInstrumenter != null)
 			iccInstrumenter.onAfterCallgraphConstruction();
@@ -1402,12 +1402,7 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 		logger.info(
 				String.format("Collecting callbacks and building a callgraph took %d seconds", (int) callbackDuration));
 
-		if(config.getPrintCallGraphOnly()){
-			visitAndPrintCallGraph(Scene.v().getCallGraph());
 
-
-			return;
-		}
 
 		final Set<SourceSinkDefinition> sources = getSources();
 		final Set<SourceSinkDefinition> sinks = getSinks();
@@ -1465,6 +1460,11 @@ public class SetupApplication implements ITaintWrapperDataFlowAnalysis {
 		// Notify our result handlers
 		for (ResultsAvailableHandler handler : resultsAvailableHandlers)
 			handler.onResultsAvailable(resultAggregator.getLastICFG(), resultAggregator.getLastResults());
+
+		if(config.getPrintCallGraphOnly()){
+			visitAndPrintCallGraph(Scene.v().getCallGraph());
+			return;
+		}
 	}
 
 

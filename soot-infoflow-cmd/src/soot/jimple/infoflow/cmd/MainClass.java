@@ -221,7 +221,8 @@ public class MainClass {
 				"Use the specified mode when processing implicit data flows (NONE, ARRAYONLY, ALL)");
 		options.addOption(OPTION_STATIC_FLOW_TRACKING_MODE, "staticmode", true,
 				"Use the specified mode when tracking static data flows (CONTEXTFLOWSENSITIVE, CONTEXTFLOWINSENSITIVE, NONE)");
-		options.addOption(OPTION_PRINT_CALLGRAPH,true,"Print callgraph only");
+		options.addOption(OPTION_PRINT_CALLGRAPH,false,"Print callgraph only");
+
 		// Evaluation-specific options
 		options.addOption(OPTION_ANALYZE_FRAMEWORKS, "analyzeframeworks", false,
 				"Analyze the full frameworks together with the app without any optimizations");
